@@ -1,0 +1,1 @@
+# diplom_python_basic
