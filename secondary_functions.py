@@ -11,7 +11,7 @@ def get_data_from_operator():
         lastname = input("Введите фамилию (или нажмите 'Enter' что бы продолжить): ")
         name = input("Введите имя: ")
         surname = input("Введите отчество (или нажмите 'Enter' что бы продолжить): ")
-        gender = input("Введите пол: ")
+        gender = input("Введите пол (мужчина/женщина): ")
         birth_date = input("Введите дату рождения: ")
         death_date = input("Введите дату смерти (или нажмите 'Enter' что бы продолжить): ")
 
@@ -33,16 +33,20 @@ def find_empty_row(sheet):
 def def_age(birth_date, last_day):
     day, month, year = birth_date.split(".")
     if not last_day:
-        year_last_day, month_last_day, *a = str(datetime.today()).split("-")
+        year_last_day, month_last_day, day_last_day, *a = str(datetime.today()).replace(" ", "-").split("-")
     else:
-        day_last_day, month_last_day, year_last_day = last_day.split()
+        day_last_day, month_last_day, year_last_day = last_day.split(".")
 
     age = int(year_last_day) - int(year)
-    if int(month_last_day) < int(month):
+
+    if int(month_last_day) == int(month):
+        if int(day) > int(day_last_day):
+            age -= 1
+    elif int(month_last_day) < int(month):
         age -= 1
 
     form = " года"
-    if age in (12, 13, 14) or not str(age)[-1] in "234":
+    if str(age)[-2:] in ("12", "13", "14") or not str(age)[-1] in "234":
         form = " лет"
 
     return str(age) + form

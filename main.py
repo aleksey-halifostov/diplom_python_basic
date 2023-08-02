@@ -6,7 +6,7 @@ import secondary_functions as function
 # выполняет роль главного меню
 # запрашивает у пользователя действие и вызывает соответствующие функции
 def main():
-    func_to_call = {1: new_person, 2: find_in_data}
+    func_to_call = {1: new_person, 2: find_in_data, 3: from_other_to_data, 4: from_data_to_other}
     while True:
         print("Выберите действие (введите номер)")
         print("1. Ввести новую запись")
@@ -65,11 +65,50 @@ def find_in_data(sheet):
         if to_find in sheet.cell(row, 1).value.upper():
             death_str = ""
             if sheet.cell(row, 4).value:
-                death_str = f" {sheet.cell(row, 2).value[1]} {sheet.cell(row, 4).value}"
+                death_str = f" {male_or_female[sheet.cell(row, 2).value][1]} {sheet.cell(row, 4).value}"
             print(
                 f"{sheet.cell(row, 1).value} {function.def_age(sheet.cell(row, 3).value, sheet.cell(row, 4).value)}, " +
                 f"{sheet.cell(row, 2).value}. {male_or_female[sheet.cell(row, 2).value][0]} {sheet.cell(row, 3).value}"
                 + death_str)
+    print("-" * 50)
+
+
+# Функция загружает данные из БД в файл other.xlsx
+@open_and_closing_data
+def from_data_to_other(sheet):
+    other_book = openpyxl.load_workbook("other.xlsx")
+    other_sheet = other_book["Sheet"]
+    row_other = function.find_empty_row(other_sheet)
+
+    try:
+        for row in range(1, sheet.max_row + 1):
+            for column in range(1, 5):
+                other_sheet.cell(row_other, column).value = sheet.cell(row, column).value
+
+            row_other += 1
+
+    finally:
+        other_book.save("other.xlsx")
+        other_book.close()
+
+
+# Функция загружает данные из файла other.xlsx в БД
+@open_and_closing_data
+def from_other_to_data(sheet):
+    other_book = openpyxl.load_workbook("other.xlsx")
+    other_sheet = other_book["Sheet"]
+    row_other = function.find_empty_row(sheet)
+
+    try:
+        for row in range(1, other_sheet.max_row + 1):
+            for column in range(1, 5):
+                sheet.cell(row_other, column).value = other_sheet.cell(row, column).value
+
+            row_other += 1
+
+    finally:
+        other_book.save("other.xlsx")
+        other_book.close()
 
 
 if __name__ == "__main__":
