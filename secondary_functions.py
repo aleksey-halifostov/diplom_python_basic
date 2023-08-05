@@ -32,10 +32,7 @@ def find_empty_row(sheet):
 # возвращает возраст
 def def_age(birth_date, last_day):
     day, month, year = birth_date.split(".")
-    if not last_day:
-        year_last_day, month_last_day, day_last_day, *a = str(datetime.today()).replace(" ", "-").split("-")
-    else:
-        day_last_day, month_last_day, year_last_day = last_day.split(".")
+    day_last_day, month_last_day, year_last_day = last_day.split(".")
 
     age = int(year_last_day) - int(year)
 
@@ -50,3 +47,18 @@ def def_age(birth_date, last_day):
         form = " лет"
 
     return str(age) + form
+
+
+# Функция возвращает дату в нужном для работы программы формате
+def date(day):
+    if day:
+        if isinstance(day, str):
+            right_date = day
+        else:
+            year, month, day, *a = str(day).replace(" ", "-").split("-")
+            right_date = f"{day}.{month}.{year}"
+    else:
+        year, month, day, *a = str(datetime.today()).replace(" ", "-").split("-")
+        right_date = f"{day}.{month}.{year}"
+
+    return right_date
